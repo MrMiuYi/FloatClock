@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-  <h1>SVG 时钟示例</h1>
-  <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <a><svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="clockFaceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" style="stop-color:#B0E0E6;stop-opacity:1" />
@@ -27,6 +26,7 @@
       <line x1="50" y1="47" x2="65" y2="28" stroke="#2F4F4F" stroke-width="2.5" stroke-linecap="round"/>
     </g>
   </svg>
+  </a>
 </body>
 </html>
 
