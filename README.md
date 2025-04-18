@@ -28,3 +28,8 @@ FloatClock 是一个简洁、优雅且始终置顶的桌面悬浮计时器应用
 timer_app = FloatingTimer(root, font_color="red", outline_color="white")
 # 使用蓝色字体和黄色轮廓
 # timer_app = FloatingTimer(root, font_color="blue", outline_color="yellow")
+
+##依赖
+#Python 3: 需要 Python 3 环境。
+#Tkinter: Python 的标准 GUI 库，通常随 Python 一起安装。
+#(可选) winsound: 代码中导入了 winsound 模块（用于播放系统声音），但这在当前计时器功能中并未使用。如果未来添加声音提示功能，则仅在 Windows 上有效。
