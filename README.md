@@ -1,0 +1,2 @@
+# FloatClock
+FloatClock基于python的一个简易比赛悬浮窗计时器
