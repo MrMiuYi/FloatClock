@@ -2,36 +2,37 @@ import tkinter as tk
 import time
 import winsound  # For playing system sounds (Windows)
 from tkinter import messagebox  # Import messagebox for confirmation dialog
+import keyboard  # 导入 keyboard 库
 
 class FloatingTimer:
-    def __init__(self, master, font_color="black", outline_color="white"): # Added outline_color parameter
+    def __init__(self, master, font_color="black", outline_color="white"):
         self.master = master
-        master.overrideredirect(True)  # Remove window decorations
-        master.attributes('-topmost', True) # Keep window on top
-        master.geometry("+200+200") # Initial position
+        master.overrideredirect(True)
+        master.attributes('-topmost', True)
+        master.geometry("+200+200")
 
-        # Initialize timer variables
+        # 初始化计时器变量
         self.is_running = True
         self.start_time = time.time()
         self.time_elapsed = 0
 
-        # Set background transparency of the ROOT window
-        master.attributes('-transparentcolor', 'lightgray') # Set 'lightgray' as transparent color
+        # 设置背景透明
+        master.attributes('-transparentcolor', 'lightgray')
 
-        # Use Canvas instead of Label
-        self.canvas = tk.Canvas(master, bg="lightgray", highlightthickness=0) # highlightthickness=0 removes border
+        # 使用 Canvas
+        self.canvas = tk.Canvas(master, bg="lightgray", highlightthickness=0)
         self.canvas.pack()
 
-        self.font_family = "Helvetica" # You can change font family here
-        self.font_size = 48          # You can change font size here
-        self.font_weight = "bold"     # You can change font weight here
-        self.text_color = font_color   # Main text color
-        self.outline_color = outline_color # Outline color
+        self.font_family = "Helvetica"
+        self.font_size = 48
+        self.font_weight = "bold"
+        self.text_color = font_color
+        self.outline_color = outline_color
 
-        self.timer_text_id = None # To store the canvas text object id for updating
+        self.timer_text_id = None
 
-        # Button frame
-        self.button_frame = tk.Frame(master, bg="lightgray") # Button frame background
+        # 按钮框架
+        self.button_frame = tk.Frame(master, bg="lightgray")
         self.button_frame.pack(pady=5)
         self.button_frame.pack_forget()
 
@@ -41,20 +42,23 @@ class FloatingTimer:
         self.reset_button = tk.Button(self.button_frame, text="重新计时", command=self.reset_timer, padx=5, pady=2)
         self.reset_button.pack(side=tk.LEFT, padx=5)
 
-        # Add Exit Button
-        self.exit_button = tk.Button(self.button_frame, text="退出", command=self.confirm_exit, padx=5, pady=2) # Changed command to confirm_exit
-        self.exit_button.pack(side=tk.LEFT, padx=5) # Pack Exit button
+        # 退出按钮
+        self.exit_button = tk.Button(self.button_frame, text="退出", command=self.confirm_exit, padx=5, pady=2)
+        self.exit_button.pack(side=tk.LEFT, padx=5)
 
         self.canvas.bind("<Button-1>", self.start_drag)
         self.canvas.bind("<B1-Motion>", self.on_drag)
         self.canvas.bind("<ButtonRelease-1>", self.stop_drag)
 
-        # Bind mouse enter and leave events to canvas now
+        # 鼠标进入/离开事件
         master.bind("<Enter>", self.show_buttons)
         master.bind("<Leave>", self.hide_buttons)
         self.button_frame.bind("<Enter>", self.show_buttons)
         self.button_frame.bind("<Leave>", self.hide_buttons)
 
+        # 添加全局快捷键 - 修改为 Win+Alt+Space 和 Win+Alt+R
+        keyboard.add_hotkey('win+alt+s', self.toggle_pause)  # Win+Alt+S 暂停/继续
+        keyboard.add_hotkey('win+alt+a', self.reset_timer)      # Win+Alt+A 重新计时
 
         self.drag_start_x = 0
         self.drag_start_y = 0
@@ -69,26 +73,24 @@ class FloatingTimer:
             seconds = int(self.time_elapsed % 60)
             time_str = "{:02d}:{:02d}".format(minutes, seconds)
 
-            self.canvas.delete("timer_text") # Remove previous text items tagged with "timer_text"
-            self.draw_outlined_text(time_str, self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2) # Draw outlined text
-
+            self.canvas.delete("timer_text")
+            self.draw_outlined_text(time_str, self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2)
 
         self.master.after(100, self.update_timer)
 
     def draw_outlined_text(self, text, x, y):
-        """Draws text with an outline effect on the canvas."""
+        """绘制带轮廓的文本."""
         font = (self.font_family, self.font_size, self.font_weight)
-        outline_offset = 2 # Adjust for thicker/thinner outline
+        outline_offset = 2
 
-        # Draw outline in white
+        # 绘制轮廓
         for dx in range(-outline_offset, outline_offset + 1):
             for dy in range(-outline_offset, outline_offset + 1):
-                if dx == 0 and dy == 0: continue # Skip the center position
+                if dx == 0 and dy == 0: continue
                 self.canvas.create_text(x + dx, y + dy, text=text, font=font, fill=self.outline_color, tags="timer_text")
 
-        # Draw main text in the specified color on top
+        # 绘制主文本
         self.timer_text_id = self.canvas.create_text(x, y, text=text, font=font, fill=self.text_color, tags="timer_text")
-
 
     def toggle_pause(self):
         self.is_running = not self.is_running
@@ -103,16 +105,16 @@ class FloatingTimer:
         self.pause_button.config(text="暂停")
         self.start_time = time.time()
         self.time_elapsed = 0
-        self.update_timer() # Directly update to show "00:00:00" immediately
+        self.update_timer()
 
     def confirm_exit(self):
-        """Confirms exit with a messagebox."""
-        if messagebox.askyesno("退出确认", "确定要退出FloatClock吗?"): # Show confirmation dialog
+        """退出确认对话框."""
+        if messagebox.askyesno("退出确认", "确定要退出FloatClock吗?"):
             self.exit_app()
 
     def exit_app(self):
-        """Closes the application."""
-        self.master.destroy() # Destroy the root window to exit
+        """关闭应用."""
+        self.master.destroy()
 
     def start_drag(self, event):
         self.drag_start_x = event.x
@@ -146,7 +148,7 @@ class FloatingTimer:
 
 
 root = tk.Tk()
-# Example usage with red font and white outline
-timer_app = FloatingTimer(root, font_color="red", outline_color="white") # Pass outline_color
-root.mainloop()
+timer_app = FloatingTimer(root, font_color="red", outline_color="white")
 
+# 保持程序运行，直到窗口关闭，以便全局快捷键监听器继续工作
+root.mainloop()
